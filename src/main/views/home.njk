@@ -1,0 +1,173 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/error-message/macro.njk" import govukErrorMessage %}
+
+{% extends "template.njk" %}
+
+<!-- You may want to make further use of these components: https://design-system.service.gov.uk/components/
+but ultimately it is up to you -->
+
+{% block content %}
+  <!-- The freedom is yours. You can design the solution however you like, however there is a starting point provided
+  to ensure you have both services running. You may want to make use of the Gov UK Components:
+  https://design-system.service.gov.uk/components/ to add tabs and so forth :) -->
+
+<form id="task-form" action="/task/create" method="POST">
+
+  {% call govukFieldset({
+    id: "task-form-input-data",
+    legend: {
+      text: "Enter Task Details",
+      classes: "govuk-fieldset__legend--l",
+      isPageHeading: true
+    }
+  }) %}
+
+    {{ govukInput({
+      label: {
+        text: "Title"
+      },
+      id: "title",
+      name: "title",
+      value: data.title,
+      autocomplete: "title",
+      errorMessage: {
+          text: errors.title
+      } if errors.title else null 
+    }) }}
+
+    {{ govukTextarea({
+      label: {
+        text: "Description (optional)"
+      },
+      id: "description",
+      value: data.description,
+      name: "description",
+      autocomplete: "description"
+    }) }}
+
+    {{ govukInput({
+      label: {
+        text: "Status"
+      },
+      id: "status",
+      name: "status",
+      value: data.status,
+      autocomplete: "status",
+      errorMessage: {
+          text: errors.status
+      } if errors.status else null 
+    }) }}
+
+    {{ govukDateInput({
+    fieldset: {
+      id: "task-form-date-time",
+      legend: {
+        text: "Due Date and Time"
+      }
+    },
+    hint: {
+      text: "For example, 31 3 1980 10 30"
+    },
+    errorMessage: {
+          text: errors.datetime
+      } if errors.datetime else null,
+    items: [
+      {
+        name: "day",
+        classes: "govuk-input--width-2",
+        id: "day",
+        value: data.day
+      },
+      {
+        name: "month",
+        classes: "govuk-input--width-2",
+        id: "month",
+        value: data.month
+      },
+      {
+        name: "year",
+        classes: "govuk-input--width-4",
+        id: "year",
+        value: data.year
+      },
+      {
+        name: "hour",
+        classes: "govuk-input--width-2",
+        id: "hour",
+        value: data.hour
+      },
+      {
+        name: "minute",
+        classes: "govuk-input--width-2",
+        id: "minute",
+        value: data.minute
+      }
+    ]
+  }) }}
+
+  {{ govukButton({
+    text: "Save and continue",
+    attributes: { type: "submit" }
+  }) }}
+
+  {% endcall %}
+
+  </form>
+
+  {% if task.id %}
+
+    {{ govukSummaryList({
+      rows: [
+        {
+          key: {
+            text: "ID"
+          },
+          value: {
+            text: task.id
+          }
+        },
+        {
+          key: {
+            text: "Title"
+          },
+          value: {
+            text: task.title
+          }
+        },
+        {
+          key: {
+            text: "Description"
+          },
+          value: {
+            text: task.description
+          }
+        },
+        {
+          key: {
+            text: "Status"
+          },
+          value: {
+            text: task.status
+          }
+        },
+        {
+          key: {
+            text: "Due Date and Time"
+          },
+          value: {
+            text: task.dueDateTime
+          }
+        }
+      ]
+    }) }}
+
+  {% endif %}
+
+  <script src="/js/task-form.js"></script>
+{% endblock %}
+
